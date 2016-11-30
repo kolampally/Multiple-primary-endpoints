@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Srinath Kolampally and Matthias Kohl" />
+
+<meta name="date" content="2016-11-30" />
+
+<title>Sample Size Calculation for Clinical Trials with Multiple Primary Endpoints</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Sample Size Calculation for Clinical Trials with Multiple Primary Endpoints</h1>
+<h4 class="author"><em>Srinath Kolampally and Matthias Kohl</em></h4>
+<h4 class="date"><em>2016-11-30</em></h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction">1. Introduction</a></li>
+<li><a href="#multiple-co-primary-endpoints">2. Multiple Co-primary Endpoints</a><ul>
+<li><a href="#known-covariance">2.1. Known Covariance</a></li>
+<li><a href="#unknown-variance">2.2. Unknown Variance</a></li>
+</ul></li>
+<li><a href="#multiple-primary-endpoints">3. Multiple Primary Endpoints</a></li>
+<li><a href="#applications">4. Applications</a><ul>
+<li><a href="#multiple-co-primary-endpoints-with-known-covariance">4.1. Multiple co-primary endpoints with known covariance</a></li>
+<li><a href="#multiple-co-primary-endpoints-with-unknown-covariance">4.2. Multiple co-primary endpoints with unknown covariance</a></li>
+<li><a href="#multiple-primary-endpoints-1">4.3. Multiple primary endpoints</a></li>
+</ul></li>
+<li><a href="#summary">5. Summary</a></li>
+<li><a href="#references">6. References</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level2">
+<h2>1. Introduction</h2>
+<p>The calculation of sample size or power is a difficult task when multiple primary endpoints (MPE) are considered, which means when there is more than one primary endpoint. In general, these MPE are categorized into multiple co-primary and multiple primary endpoints. A trial with multiple co-primary endpoints is successful if there is a significant improvement for <strong>ALL THE ENDPOINTS</strong> whereas in case of multiple primary endpoints a success in <strong>AT LEAST ONE ENDPOINT</strong> is sufficient. The package <strong>mpe</strong> can be used to calculate sample size and power for MPE.</p>
+<p>First, we give some details about the methods and formulas. Next, we illustrate how to apply our functions in simple examples. Finally, we consider Alzheimer’s Disease (AD) as an application.</p>
+</div>
+<div id="multiple-co-primary-endpoints" class="section level2">
+<h2>2. Multiple Co-primary Endpoints</h2>
+<p>In case of co-primary endpoints, the trial is designed to evaluate ALL THE ENDPOINTS. For example, in a clinical trial evaluating some treatments in patients affected by irritable bowel syndrome (IBS) the FDA recommends to evaluate ALL endpoints for assessing the IBS signs and symptoms. The co-primary endpoints are:</p>
+<ol style="list-style-type: decimal">
+<li>pain intensity and stool frequency of IBS with constipation</li>
+<li>pain intensity and stool consistency of IBS with diarrhea (FDA 2012).</li>
+</ol>
+<div id="known-covariance" class="section level3">
+<h3>2.1. Known Covariance</h3>
+<p>In this section, we briefly state the relevant formulas from Chapter 2 of the book by Sozu et al. [12], where we assume the covariance as known. Let <span class="math inline">\(K\)</span> be the number of co-primary endpoints and <span class="math inline">\(Y_{C_k}\)</span> and <span class="math inline">\(Y_{T_k}\)</span> (<span class="math inline">\(k=1,\ldots,K\)</span>) be the results for the control (C) and test (T) group in a randomized superiority clinical trial. <span class="math inline">\(Y_C=(Y_{C_1},\ldots,Y_{C_K})\)</span> and <span class="math inline">\(Y_T=(Y_{C_1},\ldots,Y_{C_K})\)</span> are assumed to follow a <span class="math inline">\(K\)</span>-variate normal distribution with mean vector <span class="math inline">\(µ_C = (µ_{C_1},\ldots, µ_{C_K})\)</span> and <span class="math inline">\(µ_T = (µ_{T_1},\ldots,µ_{T_K})\)</span> and (known!) covariance matrix <span class="math inline">\(∑\)</span>; i.e., <span class="math inline">\(Y_C \sim N_k(µ_C,∑)\)</span> and <span class="math inline">\(Y_T\sim N_k(µ_T,∑)\)</span>.</p>
+<p>where</p>
+<p><span class="math display">\[\mathbf{\Sigma} = \left[\begin{array}
+{ccc}
+\sigma_1^2 &amp; ... &amp; {\rho^1_K}{\sigma_1}{\sigma_K}\\
+ \vdots &amp;  \vdots &amp; \vdots   \\
+{\rho^1_K}{\sigma_1}{\sigma_K}&amp;  ... &amp;  \sigma_K^2
+\end{array}\right]\]</span></p>
+<p>As we are considering a superiority trial, the superiority of the test intervention over control in terms of all the <span class="math inline">\(K\)</span> primary endpoints is given if and only if <span class="math inline">\(µ_{T_k} - µ_{C_k} &gt; 0\)</span> for all <span class="math inline">\(k = 1,2.....K\)</span>. In statistical testing, the null hypothesis <span class="math inline">\(H_O\)</span> is rejected if and only if all of the null hypotheses associated with each of the <span class="math inline">\(K\)</span> primary endpoints are rejected at a significance level of <span class="math inline">\(\alpha\)</span>. The rejection region is an intersection of the involved <span class="math inline">\(K\)</span> co-primary endpoints and the statistical test used for the analysis is called intersection-union test [2]. That is, we consider the following hypotheses</p>
+<blockquote>
+<p><span class="math inline">\(H_0 : µ_{T_k} - µ_{C_k} &lt;= 0\)</span>, for at least one <span class="math inline">\(k\)</span>,</p>
+</blockquote>
+<blockquote>
+<p><span class="math inline">\(H_1 : µ_{T_k} - µ_{C_k} &gt; 0\)</span>, for all <span class="math inline">\(k\)</span>.</p>
+</blockquote>
+<p>As we are assuming the covariance to be known, the hypotheses can be tested using a multivariate (intersection-union) z-test implemented in function <code>mpe.z.test</code>. The test statistic reads</p>
+<p><span class="math display">\[Z_k = \frac{\sqrt{n}({\overline{Y_{T_k}} -\overline{Y_{C_k}}})}{\sqrt{2}\sigma_k},
+ \quad  k = 1,2,\ldots, K\]</span></p>
+<p>where <span class="math inline">\(n\)</span> is the sample size <em>per group</em> (i.e., we assume a balanced design), and <span class="math inline">\(\overline{Y_{T_k}}\)</span> and <span class="math inline">\(\overline{Y_{C_k}}\)</span> are the respective sample means.</p>
+<p>The overall power of this test is</p>
+<p><span class="math display">\[1-\beta = P\left(\bigcap_{k=1}^K \{Z_k &gt; z_\alpha\}\,\Big|\, H_1\right)\]</span></p>
+<p>where <span class="math inline">\(z_\alpha\)</span> is the <span class="math inline">\((1-\alpha)\)</span>-quantile of the standard normal distribution and the overall power is referred to as conjunctive power [3, 10].</p>
+<p>Next, we demonstrate how to calculate the sample size for a trial with two co-primary endpoints with known covariance.</p>
+<ul>
+<li>K = 2, number of co-primary endpoints</li>
+<li>delta = c(0.25, 0.4), expected effect size</li>
+<li>either Sigma or rho and SD must be specified</li>
+<li>Sigma = matrix(c(1, 0.8, 0.8, 1), nrow = 2), known covariance matrix</li>
+<li>rho = 0.8, known correlation</li>
+<li>SD = c(1,1), known standard deviations</li>
+<li>sig.level = 0.025, significance level</li>
+<li>power = 0.80, intended power</li>
+<li>n = ?</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(mpe)</code></pre></div>
+<pre><code>## Loading required package: mvtnorm</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Sigma &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.8</span>, <span class="fl">0.8</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>)
+<span class="kw">power.known.var</span>(<span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.25</span>, <span class="fl">0.4</span>), <span class="dt">Sigma =</span> Sigma, <span class="dt">sig.level =</span> <span class="fl">0.025</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple co-primary endpoints (covariance known) 
+## 
+##               n = 251.2079
+##           delta = 0.25, 0.40
+##              SD = 1, 1
+##             rho = 0.8
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.8
+## [2,]  0.8  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## equivalent: known SDs and correlation rho
+<span class="kw">power.known.var</span>(<span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.25</span>, <span class="fl">0.4</span>), <span class="dt">SD =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">rho =</span> <span class="fl">0.8</span>, <span class="dt">sig.level =</span> <span class="fl">0.025</span>, 
+                <span class="dt">power =</span> <span class="fl">0.8</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple co-primary endpoints (covariance known) 
+## 
+##               n = 251.2079
+##           delta = 0.25, 0.40
+##              SD = 1, 1
+##             rho = 0.8
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.8
+## [2,]  0.8  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<p>We obtain a sample size of n = 252 which is the sample size per group; that is, the total sample size required is 2n = 504.</p>
+<p>On the other hand, we can also calculate the power for a given sample size. In the above example with two multiple co-primary endpoints with known covariance we get.</p>
+<ul>
+<li>K = 2, number of co-primary endpoints</li>
+<li>delta = c(0.25, 0.4), expected effect size</li>
+<li>Sigma = matrix(c(1, 0.8, 0.8, 1), nrow = 2), known covariance matrix</li>
+<li>rho = 0.8, known correlation</li>
+<li>SD = c(1,1), known standard deviations</li>
+<li>sig.level = 0.025, significance level</li>
+<li>n = 252, sample size per group</li>
+<li>power = ?</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">power.known.var</span>(<span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">n =</span> <span class="dv">252</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.25</span>,<span class="fl">0.4</span>), <span class="dt">Sigma=</span>Sigma, <span class="dt">sig.level =</span> <span class="fl">0.025</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple co-primary endpoints (covariance known) 
+## 
+##               n = 252
+##           delta = 0.25, 0.40
+##              SD = 1, 1
+##             rho = 0.8
+##       sig.level = 0.025
+##           power = 0.8012348
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.8
+## [2,]  0.8  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## equivalent: known SDs and correlation rho
+<span class="kw">power.known.var</span>(<span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">n =</span> <span class="dv">252</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.25</span>, <span class="fl">0.4</span>), <span class="dt">SD =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">rho =</span> <span class="fl">0.8</span>, 
+                <span class="dt">sig.level =</span> <span class="fl">0.025</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple co-primary endpoints (covariance known) 
+## 
+##               n = 252
+##           delta = 0.25, 0.40
+##              SD = 1, 1
+##             rho = 0.8
+##       sig.level = 0.025
+##           power = 0.8012348
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.8
+## [2,]  0.8  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<p>The computed power is <span class="math inline">\(80.1\%\)</span>.</p>
+<p>Furthermore, we can perform the corresponding multivariate intersection-union z-test by applying our function <code>mpe.z.test</code>. Here we use simulated data for the demonstration.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## effect size
+delta &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.25</span>, <span class="fl">0.5</span>)
+## covariance matrix
+Sigma &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.75</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), <span class="dt">ncol =</span> <span class="dv">2</span>)
+## sample size
+n &lt;-<span class="st"> </span><span class="dv">50</span>
+## generate random data from multivariate normal distributions
+X &lt;-<span class="st"> </span><span class="kw">rmvnorm</span>(<span class="dt">n=</span>n, <span class="dt">mean =</span> delta, <span class="dt">sigma =</span> Sigma)
+Y &lt;-<span class="st"> </span><span class="kw">rmvnorm</span>(<span class="dt">n=</span>n, <span class="dt">mean =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(delta)), <span class="dt">sigma =</span> Sigma)
+## perform multivariate z-test
+<span class="kw">mpe.z.test</span>(<span class="dt">X =</span> X, <span class="dt">Y =</span> Y, <span class="dt">Sigma =</span> Sigma)</code></pre></div>
+<pre><code>## 
+##  Intersection-union z-test
+## 
+## data:  x and y
+## z = 0.92695, p-value = 0.177
+## alternative hypothesis:  true difference in means is larger than 0 for all endpoints 
+## 97.5 percent confidence intervals:
+##            0.025   1
+## EP.1 -0.20660320 Inf
+## EP.2 -0.03609263 Inf
+## sample estimates:
+##      EP.1      EP.2 
+## 0.1853896 0.3559002</code></pre>
+</div>
+<div id="unknown-variance" class="section level3">
+<h3>2.2. Unknown Variance</h3>
+<p>In this section, we give the formulas from Chapter 2 of [12] where we assume the covariance as unknown. Let <span class="math inline">\(D=(D_{1},\ldots,D_{K})^T\)</span> with <span class="math inline">\(D_{K}=\frac{\overline{Y_{T_k}} - \overline{Y_{C_k}}} {\sigma_{k}}\)</span> be the effect sizes for the <span class="math inline">\(K\)</span> endpoints. Then, <span class="math inline">\(\sqrt{kn}{D}\)</span> is distributed as a k-variate normal distribution with mean vector <span class="math inline">\(\sqrt{kn}{\delta}\)</span> and covariance matrix <span class="math inline">\(\rho_Z\)</span>; i.e., <span class="math inline">\(\sqrt{kn}{D}\sim N_k(\sqrt{kn}{\delta},\rho_z)\)</span>.</p>
+<p>The hypotheses given above in Sec. 2.1 can be tested using a multivariate intersection-union t-test, which is implemented in function <code>mpe.t.test</code>. The test statistic is</p>
+<p><span class="math display">\[T_k = \frac{\sqrt{n}({\overline{Y_{T_k}}-\overline{Y_{C_k}}})}{\sqrt{2}{s_k}},
+  \quad  k = 1,2,\ldots, K\]</span></p>
+<p>where <span class="math inline">\(n\)</span> is the sample size <em>per group</em> (i.e., we assume a balanced design), and <span class="math inline">\(s_{k}\)</span> is the estimate of the pooled standard deviation; <span class="math inline">\(\overline{Y_{T_k}}\)</span> and <span class="math inline">\(\overline{Y_{C_k}}\)</span> are the respective sample means.</p>
+<p>The overall power reads</p>
+<p><span class="math display">\[1-\beta = P\left(\bigcap_{k=1}^K \{T_k &gt; t_{\alpha,{2n-2}\}},|\, H_1\right)\]</span></p>
+<p>where <span class="math inline">\(t_{\alpha,{2n-2}}\)</span> is the <span class="math inline">\((1-\alpha)\)</span>-quantile of the t-distribution with <span class="math inline">\(2n-2\)</span> degrees of freedom.</p>
+<p>Now, we demonstrate how to calculate the sample size for a trial with two co-primary endpoints with unknown covariance. Here, we follow three steps to determine the sample size.</p>
+<ul>
+<li><p>Step 1: As we need starting values for our algorithm that computes the sample size in this case, we first act as if the covariance would be known and compute the sample size by applying our function <code>power.known.var</code>.</p></li>
+<li><p>Step 2: The resulting value of <code>n</code> is considered as lower bound for the sample size in case of unknown covariance and is used as <code>min.n</code> in function <code>power.unkown.var</code>. Moreover, we specify a reasonable <code>max.n</code> which must be larger than <code>min.n</code>.</p></li>
+<li><p>Step 3: Finally, by using the arguments from the step 2, we can compute the sample size for the situation with unknown covariance.</p></li>
+</ul>
+<div id="step-1" class="section level6">
+<h6>Step 1:</h6>
+<ul>
+<li>K= 2, number of co-primary endpoints</li>
+<li>delta = c(0.5, 0.4), expected effect size</li>
+<li>either Sigma or rho and SD must be given in the function</li>
+<li>Sigma = c(1, 0.5,0.5, 1), “known” covariance matrix</li>
+<li>rho = 0.5, “known” correlation</li>
+<li>SD = c(1,1), “known” standard deviation</li>
+<li>sig.level = 0.025, significance level</li>
+<li>power = 0.80, intended power.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Sigma &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>)
+<span class="kw">power.known.var</span>(<span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.5</span>, <span class="fl">0.4</span>), <span class="dt">Sigma =</span> Sigma, <span class="dt">sig.level =</span> <span class="fl">0.025</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple co-primary endpoints (covariance known) 
+## 
+##               n = 104.0511
+##           delta = 0.5, 0.4
+##              SD = 1, 1
+##             rho = 0.5
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.5
+## [2,]  0.5  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+</div>
+<div id="step-2" class="section level6">
+<h6>Step 2:</h6>
+<p>The resulting value of <code>n</code>, which is 105, is used as <code>min.n</code>, and <code>max.n</code> must be larger then <code>min.n</code> so we try 120.</p>
+</div>
+<div id="step-3" class="section level6">
+<h6>Step 3:</h6>
+<ul>
+<li>K= 2, number of co-primary endpoints</li>
+<li>delta = c(0.5, 0.4), expected effect size</li>
+<li>either Sigma or rho and SD must be given in the function</li>
+<li>Sigma = c(1, 0.5,0.5, 1), unknown covariance matrix</li>
+<li>rho = 0.5, unknown correlation</li>
+<li>SD = c(1,1), unknown standard deviation</li>
+<li>sig.level = 0.025, significance level<br />
+</li>
+<li>power = 0.80,intended power</li>
+<li>min.n = 105, value of sample size with known variance</li>
+<li>max.n = 120, assuming a number which is greater then min.n</li>
+<li>n = ? ,</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Sigma &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>)
+<span class="kw">power.unknown.var</span>(<span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.5</span>, <span class="fl">0.4</span>), <span class="dt">Sigma =</span> Sigma, <span class="dt">sig.level =</span> <span class="fl">0.025</span>, <span class="dt">power =</span> <span class="fl">0.8</span>, 
+                  <span class="dt">min.n =</span> <span class="dv">105</span>, <span class="dt">max.n =</span> <span class="dv">120</span>)</code></pre></div>
+<pre><code>## Current precision:    -0.004446493 
+## Current precision:    0.05238095 
+## Current precision:    0.0008362397 
+## Current precision:    -0.000309932 
+## Current precision:    -0.000234858 
+## Current precision:    0.0004040326 
+## Current precision:    0.0004157816 
+## Current precision:    -0.001306615 
+## Current precision:    0.0002849764 
+## Current precision:    0.0002982987 
+## Current precision:    -2.906845e-05 
+## Current precision:    6.486931e-05 
+## Current precision:    -0.0004430943 
+## Current precision:    -0.0004487109 
+## Current precision:    0.0004636065</code></pre>
+<pre><code>## 
+##  Power calculation for multiple co-primary endpoints (variance unknown) 
+## 
+##               n = 106.0504
+##           delta = 0.5, 0.4
+##              SD = 1, 1
+##             rho = 0.5
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.5
+## [2,]  0.5  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">##equivalent: known SDs and correlation rho
+Sigma &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>)
+<span class="kw">power.unknown.var</span>(<span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.5</span>, <span class="fl">0.4</span>), <span class="dt">rho =</span> <span class="fl">0.5</span>, <span class="dt">SD =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">sig.level =</span> <span class="fl">0.025</span>, 
+                  <span class="dt">power =</span> <span class="fl">0.8</span>, <span class="dt">min.n =</span> <span class="dv">105</span>, <span class="dt">max.n =</span> <span class="dv">120</span>)</code></pre></div>
+<pre><code>## Current precision:    -0.005113718 
+## Current precision:    0.05244112 
+## Current precision:    0.001460103 
+## Current precision:    -0.0004476949 
+## Current precision:    0.0003336463 
+## Current precision:    -0.0003484715 
+## Current precision:    -0.0005407812 
+## Current precision:    -5.602369e-05 
+## Current precision:    0.0002280232 
+## Current precision:    -0.0001051499 
+## Current precision:    -0.000355443 
+## Current precision:    -1.190841e-05 
+## Current precision:    0.0008269449 
+## Current precision:    -0.0002344186</code></pre>
+<pre><code>## 
+##  Power calculation for multiple co-primary endpoints (variance unknown) 
+## 
+##               n = 106.1013
+##           delta = 0.5, 0.4
+##              SD = 1, 1
+##             rho = 0.5
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.5
+## [2,]  0.5  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<p>We obtain a sample size of n = 107 which is the sample size per group; that is, the total sample size required is 2n = 214. The results vary a little bit as the calculation is based on <code>M</code> simulations (default: <code>M</code> = 10000).</p>
+<p>Next, we calculate the power for a given sample size using the following setup.</p>
+<ul>
+<li>K= 2, number of co-primary endpoints</li>
+<li>delta = c(0.5, 0.4), expected effect size</li>
+<li>either Sigma or rho and SD must be given in the function</li>
+<li>Sigma = c(1, 0.5, 0.5, 1), expected covariance matrix</li>
+<li>rho = 0.5, expected correlation</li>
+<li>SD = c(1,1), expected standard deviations</li>
+<li>sig.level = 0.025, significance level<br />
+</li>
+<li>n = 107, sample size per group</li>
+<li>power = ?, calcuated power</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">power.unknown.var</span>(<span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">n =</span> <span class="dv">107</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.5</span>,<span class="fl">0.4</span>), <span class="dt">Sigma =</span> <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.5</span>,<span class="fl">0.5</span>, <span class="dv">1</span>), <span class="dt">nrow=</span><span class="dv">2</span>), 
+                  <span class="dt">sig.level =</span> <span class="fl">0.025</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple co-primary endpoints (variance unknown) 
+## 
+##               n = 107
+##           delta = 0.5, 0.4
+##              SD = 1, 1
+##             rho = 0.5
+##       sig.level = 0.025
+##           power = 0.8043391
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.5
+## [2,]  0.5  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<p>The computed <code>power</code> is about <span class="math inline">\(80.3\%\)</span>.</p>
+<p>Moreover, we perform the corresponding intersection-union t-test by using simulated data and applying our function <code>mpe.t.test</code></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## effect size
+delta &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.5</span>, <span class="fl">0.4</span>)
+## covariance matrix
+Sigma &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="dv">1</span>), <span class="dt">ncol =</span> <span class="dv">2</span>)
+## sample size
+n &lt;-<span class="st"> </span><span class="dv">106</span>
+## generate random data from multivariate normal distributions
+X &lt;-<span class="st"> </span><span class="kw">rmvnorm</span>(<span class="dt">n=</span>n, <span class="dt">mean =</span> delta, <span class="dt">sigma =</span> Sigma)
+Y &lt;-<span class="st"> </span><span class="kw">rmvnorm</span>(<span class="dt">n=</span>n, <span class="dt">mean =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(delta)), <span class="dt">sigma =</span> Sigma)
+## perform multivariate t-test
+<span class="kw">mpe.t.test</span>(<span class="dt">X =</span> X, <span class="dt">Y =</span> Y)</code></pre></div>
+<pre><code>## 
+##  Intersection-union t-test
+## 
+## data:  x and y
+## t = 1.5863, df = 210, p-value = 0.1142
+## alternative hypothesis:  true difference in means is larger than 0 for all endpoints 
+## 97.5 percent confidence intervals:
+##             0.025         1
+## EDP.1  0.23196332 0.8320000
+## EDP.2 -0.09538668 0.5461955
+## sample estimates:
+##               X           Y
+## EDP.1 0.5106371 -0.02134458
+## EDP.2 0.2770461  0.05164167</code></pre>
+</div>
+</div>
+</div>
+<div id="multiple-primary-endpoints" class="section level2">
+<h2>3. Multiple Primary Endpoints</h2>
+<p>In this case, the trial is designed to find a significant difference for at least one endpoint. For example, in congestive heart failure trials like VEST [6] and<br />
+MERIT [7] two primary endpoints are considered [5]. The primary endpoints are</p>
+<ol style="list-style-type: decimal">
+<li>All-cause mortality</li>
+<li>Hospitalization for heart failure</li>
+</ol>
+<p>By increasing the number of endpoints the type I error increases. Hence, in order to control the type I error, one can apply the conservative Bonferroni correction [1, 10]. Here, we distribute <span class="math inline">\(\alpha\)</span> equally over all endpoints; i.e., <span class="math inline">\(\alpha_k = \alpha/K (k = 1,...K)\)</span>.</p>
+<p>As we are considering a superiority trial, the superiority of the test intervention over control is given if and only if <span class="math inline">\(µ_{T_k} - µ_{C_k} &gt; 0\)</span> for at least one <span class="math inline">\(k = 1,2.....K\)</span>. In statistical testing, the null hypothesis is rejected if and only if at least one of the <span class="math inline">\(K\)</span> primary endpoints is significant at <span class="math inline">\(\alpha_k\)</span></p>
+<blockquote>
+<p><span class="math inline">\(H_0 : µ_{T_k} - µ_{C_k} &lt;= 0\)</span>, for all <span class="math inline">\(k\)</span>,</p>
+</blockquote>
+<blockquote>
+<p><span class="math inline">\(H_1 : µ_{T_k} - µ_{C_k} &gt; 0\)</span>, for at least one <span class="math inline">\(k\)</span>.</p>
+</blockquote>
+<p>As we are assuming a known covariance, the hypotheses can be tested using a multivariate union-intersection z-test.</p>
+<p>The overall power reads</p>
+<p><span class="math display">\[1-\beta = P\left(\bigcup_{k=1}^K \{Z_k &gt; z_\frac\alpha K\}\,\Big|\, H_1\right)\]</span></p>
+<p>The overall power is also known as disjunctive power [3, 10].</p>
+<p>We now demonstrate how to calculate the sample size for a trial with two multiple primary endpoints with known covariance.</p>
+<ul>
+<li>K = 2, number of primary endpoints</li>
+<li>delta = c(0.20,0.30), expected effect size</li>
+<li>either Sigma or rho and SD must be given in the function</li>
+<li>Sigma = c(1, 0.3,0.3, 1), known covariance matrix</li>
+<li>rho = 0.3, correlation</li>
+<li>SD = c(1,1), known standard deviation</li>
+<li>power = 0.8, intended power</li>
+<li>n = ?</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">atleast.one.endpoint</span>(<span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.20</span>,<span class="fl">0.30</span>),  <span class="dt">Sigma =</span> <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>),
+                     <span class="dt">power =</span> <span class="fl">0.8</span>, <span class="dt">sig.level =</span> <span class="fl">0.025</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple primary endpoints for at least one endpoint 
+## 
+##               n = 146.6651
+##           delta = 0.2, 0.3
+##              SD = 1, 1
+##             rho = 0.3
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.3
+## [2,]  0.3  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">##equivalent: known SDs and correlation rho
+<span class="kw">atleast.one.endpoint</span>(<span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.20</span>, <span class="fl">0.30</span>), <span class="dt">SD =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">rho =</span> <span class="fl">0.3</span>,  <span class="dt">power =</span> <span class="fl">0.8</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple primary endpoints for at least one endpoint 
+## 
+##               n = 146.6651
+##           delta = 0.2, 0.3
+##              SD = 1, 1
+##             rho = 0.3
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.3
+## [2,]  0.3  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<p>We obtain a sample size of <code>n</code> = 147 which is the sample size per group; that is, the total sample size required is 2n = 294.</p>
+<p>Later, we calculate the power for a given sample size using the following setup.</p>
+<ul>
+<li>K = 2, number of primary endpoints</li>
+<li>delta = c(0.20,0.30), expected effect size</li>
+<li>either Sigma or rho and SD must be given in the function</li>
+<li>Sigma = c(1, 0.3,0.3, 1), known covariance matrix</li>
+<li>rho = 0.3, known correlation</li>
+<li>SD = c(1,1), known standard deviation</li>
+<li>n = 147, sample size per group</li>
+<li>power = ?</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">atleast.one.endpoint</span>(<span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">n =</span> <span class="dv">147</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.20</span>,<span class="fl">0.30</span>),  
+                     <span class="dt">Sigma =</span> <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>))</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple primary endpoints for at least one endpoint 
+## 
+##               n = 147
+##           delta = 0.2, 0.3
+##              SD = 1, 1
+##             rho = 0.3
+##       sig.level = 0.025
+##           power = 0.8008328
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.3
+## [2,]  0.3  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<p>The computed <code>power</code> is <span class="math inline">\(80.1\%\)</span>.</p>
+</div>
+<div id="applications" class="section level2">
+<h2>4. Applications</h2>
+<div id="multiple-co-primary-endpoints-with-known-covariance" class="section level3">
+<h3>4.1. Multiple co-primary endpoints with known covariance</h3>
+<p>In Alzheimer’s Disease (AD) clinical trials, ADAS-cog (Alzheimer’s Disease Assessment Scale - cognitive Sub-Scale) and CIBIC-plus (clinicians Interview Based Impression of change, Plus care give) are used as co-primary endpoints. In a 24 week double blinded, placebo controlled trial of donepezil in patients with AD [9], in which the standardized effect size of ADAS-cog and CIBIC-plus are given as 0.47 and 0.48 and known correlations of the two endpoints are <span class="math inline">\(\rho_z\)</span> = 0.0, 0.3, 0.5, 0.8 at a significance level of 0.025 with <code>power = 0.80</code>, the sample sizes can be calculated as follows</p>
+<ul>
+<li>K = 2, number of co-primary endpoints</li>
+<li>delta = c(0.47, 0.48), expected effect size</li>
+<li>either Sigma or rho and SD must be specified</li>
+<li>Sigma = matrix(c(1, rho, rho, 1), nrow = 2), known covariance matrix</li>
+<li>where rho = 0.0, or 0.3, or 0.5, or 0.8, known correlation</li>
+<li>SD = c(1, 1), known standard deviations</li>
+<li>sig.level = 0.025, significance level</li>
+<li>power = 0.80, intended power</li>
+<li>n = ?</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## correlation = 0.0,0.3,0.5,0.8
+<span class="kw">power.known.var</span>(<span class="dt">K =</span> <span class="dv">2</span>,<span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.47</span>, <span class="fl">0.48</span>), <span class="dt">Sigma =</span> <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>), 
+                <span class="dt">sig.level =</span> <span class="fl">0.025</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple co-primary endpoints (covariance known) 
+## 
+##               n = 91.40751
+##           delta = 0.47, 0.48
+##              SD = 1, 1
+##             rho = 0
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]    1    0
+## [2,]    0    1
+## 
+## NOTE: n is number in *each* group</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">power.known.var</span>(<span class="dt">K=</span> <span class="dv">2</span>,<span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.47</span>, <span class="fl">0.48</span>), <span class="dt">Sigma =</span> <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>), 
+                <span class="dt">sig.level =</span> <span class="fl">0.025</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple co-primary endpoints (covariance known) 
+## 
+##               n = 89.11173
+##           delta = 0.47, 0.48
+##              SD = 1, 1
+##             rho = 0.3
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.3
+## [2,]  0.3  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">power.known.var</span>(<span class="dt">K =</span> <span class="dv">2</span>,<span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.47</span>, <span class="fl">0.48</span>), <span class="dt">Sigma =</span> <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>), 
+                <span class="dt">sig.level =</span> <span class="fl">0.025</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple co-primary endpoints (covariance known) 
+## 
+##               n = 86.81057
+##           delta = 0.47, 0.48
+##              SD = 1, 1
+##             rho = 0.5
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.5
+## [2,]  0.5  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">power.known.var</span>(<span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.47</span>, <span class="fl">0.48</span>), <span class="dt">Sigma =</span> <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.8</span>, <span class="fl">0.8</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>), 
+                <span class="dt">sig.level =</span> <span class="fl">0.025</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple co-primary endpoints (covariance known) 
+## 
+##               n = 81.25548
+##           delta = 0.47, 0.48
+##              SD = 1, 1
+##             rho = 0.8
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.8
+## [2,]  0.8  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<p>The sample sizes obtained at <span class="math inline">\(\rho_z\)</span> = 0.0, 0.3, 0.5, 0.8 are <code>n</code> = 92, 90, 87, 82 for each group. That is, total sample sizes required are <code>2n</code>= 184, 180, 174, 164 and we observe that the sample size decreases with increasing correlation.</p>
+</div>
+<div id="multiple-co-primary-endpoints-with-unknown-covariance" class="section level3">
+<h3>4.2. Multiple co-primary endpoints with unknown covariance</h3>
+<p>We illustrate this by considering again a AD’s clinical trial with the three co-primary endpoints SIB-score (an objective cognitive test), ADCS-ADL severity score (self-care and activities of daily living) and the CGI score (Clinical Global Impressions). The standardized effect size changes from baseline to six months are assumed as 0.36, 0.30, 0.26. The unknown correlations among the three endpoints are assumed to be identical at <span class="math inline">\(\rho_z\)</span> = 0.3. For <code>sig.level = 0.025</code> and <code>power = 0.80</code>, the sample size can be calculated as follows</p>
+<div id="step-1-1" class="section level6">
+<h6>step 1:</h6>
+<p>Firstly, we assume the covariance as known and compute the sample size</p>
+<ul>
+<li>K = 3, number of co-primary endpoints</li>
+<li>delta = c(0.36, 0.30, 0.26), expected effect sizes</li>
+<li>either Sigma or rho and SD must be given in the function</li>
+<li>Sigma = matrix(c(1, 0.3, 0.3, 0.3, 1, 0.3, 0.3, 0.3, 1), nrow = 3), “known” covariance matrix</li>
+<li>rho = c(0.3, 0.3, 0.3), “known” correlations</li>
+<li>SD = c(1, 1, 1), “known” standard deviations</li>
+<li>power = 0.8, intended power</li>
+<li>n = ?</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">power.known.var</span>(<span class="dt">K =</span> <span class="dv">3</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.36</span>, <span class="fl">0.30</span>, <span class="fl">0.26</span>),
+                <span class="dt">Sigma =</span> <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="dv">1</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">3</span>),
+                <span class="dt">sig.level =</span> <span class="fl">0.025</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple co-primary endpoints (covariance known) 
+## 
+##               n = 267.2353
+##           delta = 0.36, 0.30, 0.26
+##              SD = 1, 1, 1
+##             rho = 0.3, 0.3, 0.3
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2] [,3]
+## [1,]  1.0  0.3  0.3
+## [2,]  0.3  1.0  0.3
+## [3,]  0.3  0.3  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+</div>
+<div id="step-2-1" class="section level6">
+<h6>Step 2:</h6>
+<p>The value of <code>n</code>, which is 268, is used as <code>min.n</code> and <code>max.n</code> must be larger then <code>min.n</code> so we try 300.</p>
+</div>
+<div id="step-3-1" class="section level6">
+<h6>step 3:</h6>
+<p>Now, we can compute the sample size with unknown covariance</p>
+<ul>
+<li>K = 3, number of co-primary endpoints</li>
+<li>delta = c(0.36, 0.30, 0.26), expected effect size</li>
+<li>either Sigma or rho and SD must be given in the function</li>
+<li>Sigma = matrix(c(1, 0.3, 0.3, 0.3, 1, 0.3, 0.3, 0.3, 1), nrow = 3), expected covariance matrix</li>
+<li>rho = c(0.3, 0.3, 0.3), expected correlation</li>
+<li>SD = c(1, 1, 1), expected standard deviations</li>
+<li>power = 0.8, intended power</li>
+<li>min.n = 268, value of sample size with known variance</li>
+<li>max.n = 300, assuming a number which is greater then min.n</li>
+<li>n = ?</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">power.unknown.var</span>(<span class="dt">K =</span> <span class="dv">3</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.36</span>, <span class="fl">0.30</span>, <span class="fl">0.26</span>),
+                <span class="dt">Sigma =</span> <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="dv">1</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">3</span>), 
+                <span class="dt">sig.level =</span> <span class="fl">0.025</span>, <span class="dt">power =</span> <span class="fl">0.8</span>, <span class="dt">min.n =</span> <span class="dv">268</span>, <span class="dt">max.n =</span> <span class="dv">300</span>)</code></pre></div>
+<pre><code>## Current precision:    -0.002231014 
+## Current precision:    0.05109629 
+## Current precision:    0.0003340907 
+## Current precision:    0.0005671785 
+## Current precision:    -0.001372194 
+## Current precision:    -0.0002268824 
+## Current precision:    -0.0001274194 
+## Current precision:    -8.499606e-05 
+## Current precision:    3.030342e-06 
+## Current precision:    -0.0002214168 
+## Current precision:    -0.0001525683 
+## Current precision:    -0.0001187343</code></pre>
+<pre><code>## 
+##  Power calculation for multiple co-primary endpoints (variance unknown) 
+## 
+##               n = 269.134
+##           delta = 0.36, 0.30, 0.26
+##              SD = 1, 1, 1
+##             rho = 0.3, 0.3, 0.3
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2] [,3]
+## [1,]  1.0  0.3  0.3
+## [2,]  0.3  1.0  0.3
+## [3,]  0.3  0.3  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<p>We obtain a sample size of <code>n</code> = 270 which is the sample size per group; that is, the total sample size required is <code>2n</code> = 540.</p>
+</div>
+</div>
+<div id="multiple-primary-endpoints-1" class="section level3">
+<h3>4.3. Multiple primary endpoints</h3>
+<p>Here, by considering the example of the Alzheimer’s Disease (AD) clinical trial discussed in Sec. 4.1, we illustrate the sample size calculations for multiple primary endpoints. The standardized effect sizes for ADAS-cog and CIBIC-plus are assumed as 0.47 and 0.48 and the correlation of the two endpoints is assumed to be known as <span class="math inline">\(\rho_z\)</span> = 0.0, 0.3, 0.8 at a significance level of 0.025 with <code>power = 0.80</code>.</p>
+<ul>
+<li>K = 2, number of primary endpoints</li>
+<li>delta = c(0.47, 0.48), expected effect size</li>
+<li>either Sigma or rho and SD must be specified</li>
+<li>Sigma = matrix(c(1, rho, rho, 1), nrow = 2), known covariance matrix</li>
+<li>where rho = 0.0, or 0.3, or 0.5, or 0.8, known correlation</li>
+<li>SD = c(1, 1), known standard deviations</li>
+<li>sig.level = 0.025, significance level</li>
+<li>power = 0.80, intended power</li>
+<li>n = ?</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">atleast.one.endpoint</span>(<span class="dt">K=</span> <span class="dv">2</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.47</span>, <span class="fl">0.48</span>), <span class="dt">Sigma =</span> <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>), 
+                     <span class="dt">power =</span> <span class="fl">0.8</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple primary endpoints for at least one endpoint 
+## 
+##               n = 38.81217
+##           delta = 0.47, 0.48
+##              SD = 1, 1
+##             rho = 0
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]    1    0
+## [2,]    0    1
+## 
+## NOTE: n is number in *each* group</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">atleast.one.endpoint</span>(<span class="dt">K=</span> <span class="dv">2</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.47</span>, <span class="fl">0.48</span>), <span class="dt">Sigma =</span> <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>), 
+                     <span class="dt">power =</span> <span class="fl">0.8</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple primary endpoints for at least one endpoint 
+## 
+##               n = 44.1185
+##           delta = 0.47, 0.48
+##              SD = 1, 1
+##             rho = 0.3
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.3
+## [2,]  0.3  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">atleast.one.endpoint</span>(<span class="dt">K=</span> <span class="dv">2</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.47</span>, <span class="fl">0.48</span>), <span class="dt">Sigma =</span> <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>),  
+                     <span class="dt">power =</span> <span class="fl">0.8</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple primary endpoints for at least one endpoint 
+## 
+##               n = 48.25827
+##           delta = 0.47, 0.48
+##              SD = 1, 1
+##             rho = 0.5
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.5
+## [2,]  0.5  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">atleast.one.endpoint</span>(<span class="dt">K=</span> <span class="dv">2</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.47</span>, <span class="fl">0.48</span>), <span class="dt">Sigma =</span> <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.8</span>, <span class="fl">0.8</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>), 
+                     <span class="dt">power =</span> <span class="fl">0.8</span>)</code></pre></div>
+<pre><code>## 
+##  Power calculation for multiple primary endpoints for at least one endpoint 
+## 
+##               n = 56.35982
+##           delta = 0.47, 0.48
+##              SD = 1, 1
+##             rho = 0.8
+##       sig.level = 0.025
+##           power = 0.8
+## 
+## Sigma =
+##      [,1] [,2]
+## [1,]  1.0  0.8
+## [2,]  0.8  1.0
+## 
+## NOTE: n is number in *each* group</code></pre>
+<p>Sample sizes obtained at <span class="math inline">\(\rho_z\)</span> = 0.0, 0.3, 0.5, 0.8 are <code>n</code> = 39, 45, 49, 57 for each group. That is, the total sample sizes required are <code>2n</code>= 78, 90, 98, 104. Hence, the sample size increases with increasing correlation.</p>
+</div>
+</div>
+<div id="summary" class="section level2">
+<h2>5. Summary</h2>
+<p>In clinical trials, the use of more then two primary endpoints is often necessary nowadays. Here, the correlation plays a crucial role which creates a quite complicated situation and makes it challenging to calculate the sample size and to estimate power. Hence, in order to make this accessible, we follow the book [12] and implemented our package <strong>mpe</strong> with the functions introduced above. One can use it to calculate sample size and power for multiple (co-)primary endpoints and we hope that it will be useful for statisticians and practicians.</p>
+</div>
+<div id="references" class="section level2">
+<h2>6. References</h2>
+<ol style="list-style-type: decimal">
+<li><p>Alex Dmitrenko, Ajit C. Tamhane, Frank Bret, <em>Multiple Testing Problems In Pharmaceutical statistics</em>. Chapman &amp; Hall/CRC Biostatistics Series ISBN 9781584889847</p></li>
+<li><p>Berger, R.L. (1982). <em>Multiparameter hypothesis testing and acceptance sampling</em>. Technometrics 24, 295-300</p></li>
+<li><p>F.Bretz, T. Hothorn, and P. Westfall. <em>Multiple Comparisons Using R</em>. 2010 by Chapman and Hall/CRC ISBN 9781584885740</p></li>
+<li><p>Food and Drug Administration (FDA 2012). <em>Guidance for Industry Irritable Bowel Syndrome — Clinical Evaluation of Drugs for Treatment</em>. <a href="http://www.fda.gov/downloads/Drugs/" class="uri">http://www.fda.gov/downloads/Drugs/</a>…/Guidances/UCM205269.pdf</p></li>
+<li><p>Gong J, Pinheiro JC, DeMets DL, <em>Estimating significance level and power comparisons for testing multiple endpoints in clinical trials.Control Clin Trials</em>. Control Clin Trials. 2000 Aug;21(4):313-29</p></li>
+<li><p>J.N. Cohn, S.O. Goldstein, B.H. Greenberg, et al, <em>A dose-dependent increase in mortality with vesnarinone among patients with severe heart failure</em>. N Engl J Med, 339 (1998), pp. 1810–1816</p></li>
+<li><p>MERIT-HF Study Group, <em>Effect of metoprolol CR/XL in chronic heart failure: Metoprolol CR/XL randomized intervention trial in congestive heart failure</em>. Lancet, 353 (1999), pp. 2001–2007</p></li>
+<li><p>N. L. Johnson and S. Kotz (1972). <em>Distributions in Statistics—Continuous Multivariate Distributions,</em> New York: John Wiley &amp; Son</p></li>
+<li><p>Rogers SL, Farlow MR, Doody RS, Mohs R, Friedhoff LT. <em>A 24-week, double-blind, placebo-controlled trial of donepezil in patients with Alzheimer’s disease. Donepezil Study Group</em>. Neurology. 1998 Jan;50(1):136-45</p></li>
+<li><p>Senn S, Bretz F, <em>Power and sample size when multiple endpoints are considered</em>. Pharm Stat. 2007 Jul-Sep;6(3):161-70</p></li>
+<li><p>Sozu T, Sugimoto T, Hamasaki T (2011), <em>Sample Size Determination in Superiority Clinical Trials With Multiple Co-Primary Correlated Endpoints</em>. J Biopharm Stat. 2011 Jul;21(4):650-68</p></li>
+<li><p>Sozu T, Sugimoto T, Hamasaki T, Evans S.R., <em>Sample Size Determination in Clinical Trials with Multiple Endpoints</em>. ISBN 978-3-319-22005-5</p></li>
+</ol>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

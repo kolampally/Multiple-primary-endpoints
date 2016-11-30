@@ -1,0 +1,561 @@
+---
+title: "Sample Size Calculation for Clinical Trials with Multiple Primary Endpoints"
+author: "Srinath Kolampally and Matthias Kohl"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteEngine{rmarkdown::render}
+  %\VignetteIndexEntry{MPE}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+##                    1. Introduction  
+
+
+The calculation of sample size or power is a difficult task when multiple primary 
+endpoints (MPE) are considered, which means when there is more than one primary endpoint. 
+In general, these MPE are categorized into multiple co-primary and multiple primary 
+endpoints. A trial with multiple co-primary endpoints is successful if there is
+a significant improvement for **ALL THE ENDPOINTS** whereas in case of multiple 
+primary endpoints a success in **AT LEAST ONE ENDPOINT** is sufficient. The 
+package **mpe** can be used to calculate sample size and power for MPE.
+
+First, we give some details about the methods and formulas. Next, we illustrate 
+how to apply our functions in simple examples. Finally, we consider Alzheimer's Disease (AD) as an application.
+
+
+## 2. Multiple Co-primary Endpoints
+
+In case of co-primary endpoints, the trial is designed to evaluate ALL THE ENDPOINTS. 
+For example, in a clinical trial evaluating some treatments in 
+patients affected by irritable bowel syndrome (IBS) the FDA recommends to evaluate 
+ALL endpoints for assessing the IBS signs and symptoms. The co-primary endpoints are: 
+
+1. pain intensity and stool frequency of IBS with constipation 
+2. pain intensity and stool consistency of IBS with diarrhea (FDA 2012).
+
+### 2.1. Known Covariance
+
+In this section, we briefly state the relevant formulas from Chapter 2 of the book 
+by Sozu et al. [12], where we assume the covariance as known. 
+Let $K$ be the number of co-primary endpoints and $Y_{C_k}$ and $Y_{T_k}$ ($k=1,\ldots,K$) 
+be the results for the control (C) and test (T) group in a randomized superiority 
+clinical trial. $Y_C=(Y_{C_1},\ldots,Y_{C_K})$ and $Y_T=(Y_{C_1},\ldots,Y_{C_K})$ 
+are assumed to follow a $K$-variate normal distribution with mean vector 
+$µ_C = (µ_{C_1},\ldots, µ_{C_K})$ and $µ_T = (µ_{T_1},\ldots,µ_{T_K})$
+and (known!) covariance matrix $∑$; i.e., $Y_C \sim N_k(µ_C,∑)$ and $Y_T\sim N_k(µ_T,∑)$.
+   
+where 
+     
+$$\mathbf{\Sigma} = \left[\begin{array}
+{ccc}
+\sigma_1^2 & ... & {\rho^1_K}{\sigma_1}{\sigma_K}\\
+ \vdots &  \vdots & \vdots   \\
+{\rho^1_K}{\sigma_1}{\sigma_K}&  ... &  \sigma_K^2
+\end{array}\right]$$
+   
+As we are considering a superiority trial, the superiority of the test intervention 
+over control in terms of all the $K$ primary endpoints is given if and only if 
+$µ_{T_k} - µ_{C_k} > 0$ for all $k = 1,2.....K$. In statistical testing, the 
+null hypothesis $H_O$ is rejected if and only if all of the null hypotheses 
+associated with each of the $K$ primary endpoints are rejected at a significance 
+level of $\alpha$. The rejection region is an intersection of the involved $K$ 
+co-primary endpoints and the statistical test used for the analysis is called 
+intersection-union test [2]. That is, we consider the following hypotheses
+   
+   >$H_0 : µ_{T_k} - µ_{C_k} <= 0$, for at least one $k$,
+
+   >$H_1 : µ_{T_k} - µ_{C_k} > 0$, for all $k$.
+     
+As we are assuming the covariance to be known, the hypotheses can be tested 
+using a multivariate (intersection-union) z-test implemented in function 
+`mpe.z.test`. The test statistic reads
+ 
+ $$Z_k = \frac{\sqrt{n}({\overline{Y_{T_k}} -\overline{Y_{C_k}}})}{\sqrt{2}\sigma_k},
+ \quad  k = 1,2,\ldots, K$$ 
+
+where $n$ is the sample size *per group* (i.e., we assume a balanced design), 
+and $\overline{Y_{T_k}}$ and $\overline{Y_{C_k}}$ are the respective sample means.
+ 
+The overall power of this test is
+
+$$1-\beta = P\left(\bigcap_{k=1}^K \{Z_k > z_\alpha\}\,\Big|\, H_1\right)$$  
+                    
+where $z_\alpha$ is the $(1-\alpha)$-quantile of the standard normal distribution and the overall power is referred to as conjunctive power [3, 10].
+
+Next, we demonstrate how to calculate the sample size for a trial with two 
+co-primary endpoints with known covariance.  
+ 
+* K = 2, number of co-primary endpoints 
+* delta = c(0.25, 0.4), expected effect size
+* either Sigma or rho and SD must be specified
+* Sigma = matrix(c(1, 0.8, 0.8, 1), nrow = 2), known covariance matrix
+* rho = 0.8, known correlation 
+* SD = c(1,1), known standard deviations
+* sig.level = 0.025, significance level 
+* power = 0.80, intended power
+* n = ?
+
+```{r}
+library(mpe)
+Sigma <- matrix(c(1, 0.8, 0.8, 1), nrow = 2)
+power.known.var(K = 2, delta = c(0.25, 0.4), Sigma = Sigma, sig.level = 0.025, power = 0.8)
+```
+
+```{r}
+## equivalent: known SDs and correlation rho
+power.known.var(K = 2, delta = c(0.25, 0.4), SD = c(1,1), rho = 0.8, sig.level = 0.025, 
+                power = 0.8)
+
+```
+We obtain a sample size of n = 252 which is the sample size per group; that is, 
+the total sample size required is 2n = 504.
+
+On the other hand, we can also calculate the power for a given sample size. In the above example with two multiple co-primary endpoints with known covariance we get. 
+      
+* K = 2, number of co-primary endpoints 
+* delta = c(0.25, 0.4), expected effect size 
+* Sigma = matrix(c(1, 0.8, 0.8, 1), nrow = 2), known covariance matrix
+* rho = 0.8, known correlation 
+* SD = c(1,1), known standard deviations
+* sig.level = 0.025, significance level 
+* n = 252, sample size per group
+* power = ?
+
+```{r}
+power.known.var(K = 2, n = 252, delta = c(0.25,0.4), Sigma=Sigma, sig.level = 0.025)
+```
+
+```{r}
+## equivalent: known SDs and correlation rho
+power.known.var(K = 2, n = 252, delta = c(0.25, 0.4), SD = c(1,1), rho = 0.8, 
+                sig.level = 0.025)
+
+```
+    
+The computed power is $80.1\%$.
+     
+
+Furthermore, we can perform the corresponding multivariate intersection-union z-test
+by applying our function `mpe.z.test`. Here we use simulated data for the 
+demonstration.
+
+```{r}
+## effect size
+delta <- c(0.25, 0.5)
+## covariance matrix
+Sigma <- matrix(c(1, 0.75, 0.75, 1), ncol = 2)
+## sample size
+n <- 50
+## generate random data from multivariate normal distributions
+X <- rmvnorm(n=n, mean = delta, sigma = Sigma)
+Y <- rmvnorm(n=n, mean = rep(0, length(delta)), sigma = Sigma)
+## perform multivariate z-test
+mpe.z.test(X = X, Y = Y, Sigma = Sigma)
+```
+
+
+###2.2. Unknown Variance
+
+In this section, we give the formulas from Chapter 2 of [12] where we assume the 
+covariance as unknown. Let $D=(D_{1},\ldots,D_{K})^T$ with $D_{K}=\frac{\overline{Y_{T_k}} - \overline{Y_{C_k}}} {\sigma_{k}}$ be the effect sizes for the $K$ endpoints. Then, 
+$\sqrt{kn}{D}$ is distributed as a k-variate normal distribution with mean vector 
+$\sqrt{kn}{\delta}$ and covariance matrix $\rho_Z$; i.e., 
+$\sqrt{kn}{D}\sim N_k(\sqrt{kn}{\delta},\rho_z)$. 
+
+The hypotheses given above in Sec. 2.1 can be tested using a multivariate 
+intersection-union t-test, which is implemented in function `mpe.t.test`. The 
+test statistic is 
+ 
+  $$T_k = \frac{\sqrt{n}({\overline{Y_{T_k}}-\overline{Y_{C_k}}})}{\sqrt{2}{s_k}},
+  \quad  k = 1,2,\ldots, K$$
+ 
+ 
+where $n$ is the sample size *per group* (i.e., we assume a balanced design), and 
+$s_{k}$ is the estimate of the pooled standard deviation; 
+$\overline{Y_{T_k}}$ and $\overline{Y_{C_k}}$ are the respective sample means.
+
+ 
+The overall power reads
+
+$$1-\beta = P\left(\bigcap_{k=1}^K \{T_k > t_{\alpha,{2n-2}\}},|\, H_1\right)$$ 
+
+
+where $t_{\alpha,{2n-2}}$ is the $(1-\alpha)$-quantile of the t-distribution 
+with $2n-2$ degrees of freedom.
+  
+  
+Now, we demonstrate how to calculate the sample size for a trial with two 
+co-primary endpoints with unknown covariance. Here, we follow three steps to 
+determine the sample size.
+
++ Step 1: As we need starting values for our algorithm that computes the sample 
+size in this case, we first act as if the covariance would be known and compute 
+the sample size by applying our function `power.known.var`.
+
++ Step 2: The resulting value of `n` is considered as lower bound for the sample 
+size in case of unknown covariance and is used as `min.n` in function 
+`power.unkown.var`. Moreover, we specify a reasonable `max.n` which must be larger 
+than `min.n`.
+
++ Step 3: Finally, by using the arguments from the step 2, we can compute the 
+sample size for the situation with unknown covariance.
+  
+ 
+###### Step 1: 
+
+* K= 2, number of co-primary endpoints 
+* delta  = c(0.5, 0.4), expected effect size
+* either Sigma or rho and SD must be given in the function
+* Sigma = c(1, 0.5,0.5, 1), "known" covariance matrix
+* rho = 0.5, "known" correlation
+* SD = c(1,1), "known" standard deviation
+* sig.level = 0.025, significance level 
+* power = 0.80, intended power.
+
+```{r}
+Sigma <- matrix(c(1, 0.5, 0.5, 1), nrow = 2)
+power.known.var(K = 2, delta = c(0.5, 0.4), Sigma = Sigma, sig.level = 0.025, power = 0.8)
+```
+
+###### Step 2:
+
+The resulting value of `n`, which is 105, is used as `min.n`, and `max.n` must be larger then `min.n` so we try 120.
+
+###### Step 3:
+ 
+* K= 2, number of co-primary endpoints
+* delta  = c(0.5, 0.4), expected effect size
+* either Sigma or rho and SD must be given in the function
+* Sigma = c(1, 0.5,0.5, 1), unknown covariance matrix
+* rho = 0.5, unknown correlation 
+* SD = c(1,1), unknown standard deviation
+* sig.level = 0.025, significance level  
+* power = 0.80,intended power
+* min.n = 105, value of sample size with known variance
+* max.n = 120, assuming a number which is greater then min.n
+* n = ? , 
+
+   
+```{r}
+Sigma <- matrix(c(1, 0.5, 0.5, 1), nrow = 2)
+power.unknown.var(K = 2, delta = c(0.5, 0.4), Sigma = Sigma, sig.level = 0.025, power = 0.8, 
+                  min.n = 105, max.n = 120)
+
+```
+
+```{r}
+##equivalent: known SDs and correlation rho
+Sigma <- matrix(c(1, 0.5, 0.5, 1), nrow = 2)
+power.unknown.var(K = 2, delta = c(0.5, 0.4), rho = 0.5, SD = c(1,1), sig.level = 0.025, 
+                  power = 0.8, min.n = 105, max.n = 120)
+
+```
+
+We obtain a sample size of n = 107 which is the sample size per group; that is, 
+the total sample size required is 2n = 214. The results vary a little bit as
+the calculation is based on `M` simulations (default: `M` = 10000).
+
+
+Next, we calculate the power for a given sample size using the following setup.
+   
+* K= 2, number of co-primary endpoints 
+* delta  = c(0.5, 0.4), expected effect size
+* either Sigma or rho and SD must be given in the function
+* Sigma = c(1, 0.5, 0.5, 1), expected covariance matrix
+* rho = 0.5, expected correlation
+* SD = c(1,1), expected standard deviations
+* sig.level = 0.025, significance level  
+* n = 107, sample size per group
+* power = ?, calcuated power
+
+
+```{r}
+power.unknown.var(K = 2, n = 107, delta = c(0.5,0.4), Sigma = matrix(c(1, 0.5,0.5, 1), nrow=2), 
+                  sig.level = 0.025)
+
+```
+The computed `power` is about $80.3\%$.
+     
+
+Moreover, we perform the corresponding intersection-union t-test by using simulated 
+data and applying our function `mpe.t.test`
+
+
+```{r}
+## effect size
+delta <- c(0.5, 0.4)
+## covariance matrix
+Sigma <- matrix(c(1, 0.5, 0.5, 1), ncol = 2)
+## sample size
+n <- 106
+## generate random data from multivariate normal distributions
+X <- rmvnorm(n=n, mean = delta, sigma = Sigma)
+Y <- rmvnorm(n=n, mean = rep(0, length(delta)), sigma = Sigma)
+## perform multivariate t-test
+mpe.t.test(X = X, Y = Y)
+```
+
+
+
+## 3. Multiple Primary Endpoints
+In this case, the trial is designed to find a significant difference for at least 
+one endpoint. For example, in congestive heart failure trials like VEST [6] and  
+MERIT [7] two primary endpoints are considered [5]. The primary endpoints are
+
+1. All-cause mortality
+2. Hospitalization for heart failure 
+
+By increasing the number of endpoints the type I error increases. Hence, in 
+order to control the type I error, one can apply the conservative Bonferroni 
+correction [1, 10]. Here, we distribute $\alpha$ equally over all endpoints; 
+i.e., $\alpha_k = \alpha/K (k = 1,...K)$. 
+
+As we are considering a superiority trial, the superiority of the test intervention 
+over control is given if and only if $µ_{T_k} - µ_{C_k} > 0$ for at least one 
+$k = 1,2.....K$. In statistical testing, the null hypothesis is rejected if and 
+only if at least one of the $K$ primary endpoints is significant at $\alpha_k$
+
+   
+   >$H_0 : µ_{T_k} - µ_{C_k} <= 0$, for all $k$,
+
+   >$H_1 : µ_{T_k} - µ_{C_k} > 0$, for at least one $k$.
+     
+As we are assuming a known covariance, the hypotheses can be tested using a 
+multivariate union-intersection z-test.
+
+
+The overall power reads
+
+$$1-\beta = P\left(\bigcup_{k=1}^K \{Z_k > z_\frac\alpha K\}\,\Big|\, H_1\right)$$
+
+The overall power is also known as disjunctive power [3, 10].
+
+We now demonstrate how to calculate the sample size for a trial with two 
+multiple primary endpoints with known covariance.
+
+* K = 2, number of primary endpoints
+* delta = c(0.20,0.30), expected effect size 
+* either Sigma or rho and SD must be given in the function
+* Sigma = c(1, 0.3,0.3, 1), known covariance matrix
+* rho = 0.3, correlation
+* SD = c(1,1), known standard deviation
+* power = 0.8, intended power
+* n = ?
+
+
+```{r}
+atleast.one.endpoint(K = 2, delta = c(0.20,0.30),  Sigma = matrix(c(1, 0.3, 0.3, 1), nrow = 2),
+                     power = 0.8, sig.level = 0.025)
+
+```
+```{r}
+##equivalent: known SDs and correlation rho
+atleast.one.endpoint(K = 2, delta = c(0.20, 0.30), SD = c(1,1), rho = 0.3,  power = 0.8)
+
+```
+
+   
+We obtain a sample size of `n` = 147 which is the sample size per group; that is, the total sample size required is 2n = 294.
+
+Later, we calculate the power for a given sample size using the following setup.
+ 
+* K = 2, number of primary endpoints
+* delta = c(0.20,0.30), expected effect size
+* either Sigma or rho and SD must be given in the function
+* Sigma = c(1, 0.3,0.3, 1), known covariance matrix
+* rho = 0.3, known correlation
+* SD = c(1,1), known standard deviation
+* n = 147, sample size per group
+* power = ?
+
+
+```{r}
+atleast.one.endpoint(K = 2, n = 147, delta = c(0.20,0.30),  
+                     Sigma = matrix(c(1, 0.3, 0.3, 1), nrow = 2))
+
+```
+The computed `power` is $80.1\%$. 
+
+## 4. Applications
+
+###4.1. Multiple co-primary endpoints with known covariance 
+
+In Alzheimer's Disease (AD) clinical trials, ADAS-cog (Alzheimer's Disease Assessment 
+Scale - cognitive Sub-Scale) and CIBIC-plus (clinicians Interview Based Impression 
+of change, Plus care give) are used as co-primary endpoints. In a 24 week double 
+blinded, placebo controlled trial of donepezil in patients with AD [9], in which 
+the standardized effect size of ADAS-cog and CIBIC-plus are given as 0.47 and 0.48 
+and known correlations of the two endpoints are $\rho_z$ = 0.0, 0.3, 0.5, 0.8 at 
+a significance level of 0.025 with `power = 0.80`, the sample sizes can be 
+calculated as follows
+
+* K = 2, number of co-primary endpoints 
+* delta = c(0.47, 0.48), expected effect size
+* either Sigma or rho and SD must be specified
+* Sigma = matrix(c(1, rho, rho, 1), nrow = 2), known covariance matrix
+* where rho = 0.0, or 0.3, or 0.5, or 0.8, known correlation 
+* SD = c(1, 1), known standard deviations
+* sig.level = 0.025, significance level 
+* power = 0.80, intended power
+* n = ?
+
+
+```{r}
+## correlation = 0.0,0.3,0.5,0.8
+power.known.var(K = 2,delta = c(0.47, 0.48), Sigma = matrix(c(1, 0.0, 0.0, 1), nrow = 2), 
+                sig.level = 0.025, power = 0.8)
+
+power.known.var(K= 2,delta = c(0.47, 0.48), Sigma = matrix(c(1, 0.3, 0.3, 1), nrow = 2), 
+                sig.level = 0.025, power = 0.8)
+
+power.known.var(K = 2,delta = c(0.47, 0.48), Sigma = matrix(c(1, 0.5, 0.5, 1), nrow = 2), 
+                sig.level = 0.025, power = 0.8)
+
+power.known.var(K = 2, delta = c(0.47, 0.48), Sigma = matrix(c(1, 0.8, 0.8, 1), nrow = 2), 
+                sig.level = 0.025, power = 0.8)
+
+``` 
+The sample sizes obtained at $\rho_z$ = 0.0, 0.3, 0.5, 0.8  are `n` = 92, 90, 87, 82 
+for each group. That is, total sample sizes required are 
+`2n`= 184, 180, 174, 164 and we observe that the sample size decreases with
+increasing correlation.
+
+###4.2. Multiple co-primary endpoints with unknown covariance    
+
+We illustrate this by considering again a AD's clinical trial with the three 
+co-primary endpoints SIB-score (an objective cognitive test), ADCS-ADL severity 
+score (self-care and activities of daily living) and the CGI score (Clinical 
+Global Impressions). The standardized effect size changes from baseline to six 
+months are assumed as 0.36, 0.30, 0.26. The unknown correlations among the 
+three endpoints are assumed to be identical at $\rho_z$ = 0.3. For 
+`sig.level = 0.025` and `power = 0.80`, the sample size can be calculated as 
+follows
+
+###### step 1: 
+Firstly, we assume the covariance as known and compute the sample size
+
+* K = 3, number of co-primary endpoints
+* delta = c(0.36, 0.30, 0.26), expected effect sizes 
+* either Sigma or rho and SD must be given in the function
+* Sigma = matrix(c(1, 0.3, 0.3, 0.3, 1, 0.3, 0.3, 0.3, 1), nrow = 3), "known" covariance matrix
+* rho = c(0.3, 0.3, 0.3), "known" correlations
+* SD = c(1, 1, 1), "known" standard deviations
+* power = 0.8, intended power
+* n = ?
+   
+```{r}
+
+power.known.var(K = 3, delta = c(0.36, 0.30, 0.26),
+                Sigma = matrix(c(1, 0.3, 0.3, 0.3, 1, 0.3, 0.3, 0.3, 1), nrow = 3),
+                sig.level = 0.025, power = 0.8)
+
+```
+
+###### Step 2:  
+The value of `n`, which is 268, is used as `min.n` and `max.n` must be larger 
+then `min.n` so we try 300.
+
+###### step 3: 
+Now, we can compute the sample size with unknown covariance
+
+* K = 3, number of co-primary endpoints
+* delta = c(0.36, 0.30, 0.26), expected effect size 
+* either Sigma or rho and SD must be given in the function
+* Sigma = matrix(c(1, 0.3, 0.3, 0.3, 1, 0.3, 0.3, 0.3, 1), nrow = 3), expected covariance matrix
+* rho = c(0.3, 0.3, 0.3), expected correlation
+* SD = c(1, 1, 1), expected standard deviations
+* power = 0.8, intended power
+* min.n = 268, value of sample size with known variance
+* max.n = 300, assuming a number which is greater then min.n
+* n = ?
+   
+```{r}
+power.unknown.var(K = 3, delta = c(0.36, 0.30, 0.26),
+                Sigma = matrix(c(1, 0.3, 0.3, 0.3, 1, 0.3, 0.3, 0.3, 1), nrow = 3), 
+                sig.level = 0.025, power = 0.8, min.n = 268, max.n = 300)
+
+```
+We obtain a sample size of `n` = 270 which is the sample size per group; that is, 
+the total sample size required is `2n` = 540.
+ 
+###4.3. Multiple primary endpoints
+
+Here, by considering the example of the Alzheimer's Disease (AD) clinical trial 
+discussed in Sec. 4.1, we illustrate the sample size calculations for 
+multiple primary endpoints. The standardized effect sizes for ADAS-cog and 
+CIBIC-plus are assumed as 0.47 and 0.48 and the correlation of the two endpoints 
+is assumed to be known as $\rho_z$ = 0.0, 0.3, 0.8 at a significance level of 
+0.025 with `power = 0.80`.
+
+* K = 2, number of primary endpoints 
+* delta = c(0.47, 0.48), expected effect size
+* either Sigma or rho and SD must be specified
+* Sigma = matrix(c(1, rho, rho, 1), nrow = 2), known covariance matrix
+* where rho = 0.0, or 0.3, or 0.5, or 0.8, known correlation 
+* SD = c(1, 1), known standard deviations
+* sig.level = 0.025, significance level 
+* power = 0.80, intended power
+* n = ?
+
+```{r}
+atleast.one.endpoint(K= 2, delta = c(0.47, 0.48), Sigma = matrix(c(1, 0.0, 0.0, 1), nrow = 2), 
+                     power = 0.8)
+
+atleast.one.endpoint(K= 2, delta = c(0.47, 0.48), Sigma = matrix(c(1, 0.3, 0.3, 1), nrow = 2), 
+                     power = 0.8)
+
+atleast.one.endpoint(K= 2, delta = c(0.47, 0.48), Sigma = matrix(c(1, 0.5, 0.5, 1), nrow = 2),  
+                     power = 0.8)
+
+atleast.one.endpoint(K= 2, delta = c(0.47, 0.48), Sigma = matrix(c(1, 0.8, 0.8, 1), nrow = 2), 
+                     power = 0.8)
+
+```
+
+Sample sizes obtained at $\rho_z$ = 0.0, 0.3, 0.5, 0.8 are `n` = 39, 45, 49, 57 
+for each group. That is, the total sample sizes required are `2n`= 78, 90, 98, 104.
+Hence, the sample size increases with increasing correlation.
+
+
+##5. Summary
+
+In clinical trials, the use of more then two primary endpoints is often necessary 
+nowadays. Here, the correlation plays a crucial role which creates a quite
+complicated situation and makes it challenging to calculate the sample size 
+and to estimate power. Hence, in order to make this accessible, we follow the 
+book [12] and implemented our package **mpe** with the functions introduced above. 
+One can use it to calculate sample size and power for multiple (co-)primary 
+endpoints and we hope that it will be useful for statisticians and practicians.
+ 
+
+##6. References
+
+1. Alex Dmitrenko, Ajit C. Tamhane, Frank Bret, _Multiple Testing Problems In Pharmaceutical statistics_. Chapman & Hall/CRC Biostatistics Series ISBN 9781584889847
+
+2. Berger, R.L. (1982). _Multiparameter hypothesis testing and acceptance sampling_. Technometrics 24, 295-300
+
+3. F.Bretz, T. Hothorn, and P. Westfall. _Multiple Comparisons Using R_. 2010 by Chapman and Hall/CRC ISBN 9781584885740 
+
+4. Food and Drug Administration (FDA 2012). _Guidance for Industry Irritable Bowel Syndrome — Clinical Evaluation of Drugs for Treatment_. http://www.fda.gov/downloads/Drugs/.../Guidances/UCM205269.pdf
+
+5. Gong J, Pinheiro JC, DeMets DL, _Estimating significance level and power comparisons for testing multiple endpoints in clinical trials.Control Clin Trials_. Control Clin Trials. 2000 Aug;21(4):313-29
+
+6. J.N. Cohn, S.O. Goldstein, B.H. Greenberg, et al, _A dose-dependent increase in mortality with vesnarinone among patients with severe heart failure_. N Engl J Med, 339 (1998), pp. 1810–1816
+
+7. MERIT-HF Study Group, _Effect of metoprolol CR/XL in chronic heart failure: Metoprolol CR/XL randomized intervention trial in congestive heart failure_. Lancet, 353 (1999), pp. 2001–2007
+
+8. N. L. Johnson and S. Kotz (1972). _Distributions in Statistics—Continuous Multivariate Distributions,_ New York: John Wiley & Son
+
+9. Rogers SL, Farlow MR, Doody RS, Mohs R, Friedhoff LT. _A 24-week, double-blind, placebo-controlled trial of donepezil in patients with Alzheimer's disease. Donepezil Study Group_. Neurology. 1998 Jan;50(1):136-45
+
+10. Senn S, Bretz F, _Power and sample size when multiple endpoints are considered_. Pharm Stat. 2007 Jul-Sep;6(3):161-70
+
+11. Sozu T, Sugimoto T, Hamasaki T (2011), _Sample Size Determination in Superiority Clinical Trials With Multiple Co-Primary Correlated Endpoints_. J Biopharm Stat. 2011 Jul;21(4):650-68
+
+12. Sozu T, Sugimoto T, Hamasaki T, Evans S.R., _Sample Size Determination in Clinical Trials with Multiple Endpoints_. ISBN 978-3-319-22005-5
+
+

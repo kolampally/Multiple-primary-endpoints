@@ -1,0 +1,13 @@
+## imports
+importFrom("mvtnorm", "pmvnorm")
+importFrom("stats", "cov2cor", "pnorm", "qnorm", "qt", "rWishart",
+           "t.test", "uniroot")
+
+## exports
+export(atleast.one.endpoint)
+export(mpe.t.test)
+export(mpe.z.test)
+export(power.known.var)
+export(power.unknown.var)
+S3method(print, power.mpe.test)
+S3method(print, mpe.test)

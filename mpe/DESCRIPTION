@@ -1,0 +1,19 @@
+Package: mpe
+Version: 1.0
+Date: 2016-11-30
+Title: Multiple Primary Endpoints
+Authors@R: c(person("Matthias", "Kohl", role=c("aut", "cph")),
+             person("Srinath", "Kolampally", role=c("cre", "aut", "cph"),
+                    email = "kolampally.srinath@gmail.com"))
+Description: Functions for calculating sample size and power for clinical trials
+    with multiple (co-)primary endpoints.
+License: LGPL-3
+LazyData: TRUE
+Depends: R (>= 3.1.0), mvtnorm
+Imports: stats
+Suggests: rmarkdown
+NeedsCompilation: no
+Packaged: 2016-11-30 11:59:56 UTC; kohlm
+Author: Matthias Kohl [aut, cph],
+  Srinath Kolampally [cre, aut, cph]
+Maintainer: Srinath Kolampally <kolampally.srinath@gmail.com>
