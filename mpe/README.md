@@ -1,3 +1,2 @@
 
-+# mpe
-+This repository consists of R package mpe
+This repository consists of R package mpe
