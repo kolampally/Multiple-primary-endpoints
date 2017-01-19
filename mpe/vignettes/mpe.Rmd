@@ -6,8 +6,8 @@ output:
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteEngine{rmarkdown::render}
   %\VignetteIndexEntry{MPE}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -385,8 +385,8 @@ The computed `power` is $80.1\%$.
 ###4.1. Multiple co-primary endpoints with known covariance 
 
 In Alzheimer's Disease (AD) clinical trials, ADAS-cog (Alzheimer's Disease Assessment 
-Scale - cognitive Sub-Scale) and CIBIC-plus (clinicians Interview Based Impression 
-of change, Plus care give) are used as co-primary endpoints. In a 24 week double 
+Scale - cognitive Sub-Scale) and CIBIC-plus (Clinicians Interview Based Impression 
+of Change - plus care give) are used as co-primary endpoints. In a 24 week double 
 blinded, placebo controlled trial of donepezil in patients with AD [9], in which 
 the standardized effect size of ADAS-cog and CIBIC-plus are given as 0.47 and 0.48 
 and known correlations of the two endpoints are $\rho_z$ = 0.0, 0.3, 0.5, 0.8 at 
@@ -523,7 +523,7 @@ Hence, the sample size increases with increasing correlation.
 
 ##5. Summary
 
-In clinical trials, the use of more then two primary endpoints is often necessary 
+In clinical trials, the use of more than two primary endpoints is often necessary 
 nowadays. Here, the correlation plays a crucial role which creates a quite
 complicated situation and makes it challenging to calculate the sample size 
 and to estimate power. Hence, in order to make this accessible, we follow the 

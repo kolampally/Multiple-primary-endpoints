@@ -12,7 +12,7 @@
 
 <meta name="author" content="Srinath Kolampally and Matthias Kohl" />
 
-<meta name="date" content="2016-11-30" />
+<meta name="date" content="2017-01-18" />
 
 <title>Sample Size Calculation for Clinical Trials with Multiple Primary Endpoints</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Sample Size Calculation for Clinical Trials with Multiple Primary Endpoints</h1>
 <h4 class="author"><em>Srinath Kolampally and Matthias Kohl</em></h4>
-<h4 class="date"><em>2016-11-30</em></h4>
+<h4 class="date"><em>2017-01-18</em></h4>
 
 
 <div id="TOC">
@@ -243,15 +243,15 @@ Y &lt;-<span class="st"> </span><span class="kw">rmvnorm</span>(<span class="dt"
 ##  Intersection-union z-test
 ## 
 ## data:  x and y
-## z = 0.92695, p-value = 0.177
+## z = 0.63013, p-value = 0.2643
 ## alternative hypothesis:  true difference in means is larger than 0 for all endpoints 
 ## 97.5 percent confidence intervals:
 ##            0.025   1
-## EP.1 -0.20660320 Inf
-## EP.2 -0.03609263 Inf
+## EP.1 -0.26596736 Inf
+## EP.2  0.02838783 Inf
 ## sample estimates:
 ##      EP.1      EP.2 
-## 0.1853896 0.3559002</code></pre>
+## 0.1260254 0.4203806</code></pre>
 </div>
 <div id="unknown-variance" class="section level3">
 <h3>2.2. Unknown Variance</h3>
@@ -323,25 +323,27 @@ Y &lt;-<span class="st"> </span><span class="kw">rmvnorm</span>(<span class="dt"
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Sigma &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>)
 <span class="kw">power.unknown.var</span>(<span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.5</span>, <span class="fl">0.4</span>), <span class="dt">Sigma =</span> Sigma, <span class="dt">sig.level =</span> <span class="fl">0.025</span>, <span class="dt">power =</span> <span class="fl">0.8</span>, 
                   <span class="dt">min.n =</span> <span class="dv">105</span>, <span class="dt">max.n =</span> <span class="dv">120</span>)</code></pre></div>
-<pre><code>## Current precision:    -0.004446493 
-## Current precision:    0.05238095 
-## Current precision:    0.0008362397 
-## Current precision:    -0.000309932 
-## Current precision:    -0.000234858 
-## Current precision:    0.0004040326 
-## Current precision:    0.0004157816 
-## Current precision:    -0.001306615 
-## Current precision:    0.0002849764 
-## Current precision:    0.0002982987 
-## Current precision:    -2.906845e-05 
-## Current precision:    6.486931e-05 
-## Current precision:    -0.0004430943 
-## Current precision:    -0.0004487109 
-## Current precision:    0.0004636065</code></pre>
+<pre><code>## Current precision:    -0.004498042 
+## Current precision:    0.05273966 
+## Current precision:    0.0004857218 
+## Current precision:    3.051773e-05 
+## Current precision:    0.0001096253 
+## Current precision:    -0.00275342 
+## Current precision:    0.0001246012 
+## Current precision:    -0.001389154 
+## Current precision:    -0.0004505776 
+## Current precision:    -0.0002457511 
+## Current precision:    0.00048668 
+## Current precision:    -0.0001746752 
+## Current precision:    -6.877981e-06 
+## Current precision:    -0.0005559666 
+## Current precision:    1.812343e-05 
+## Current precision:    -0.0003022253 
+## Current precision:    0.0006142793</code></pre>
 <pre><code>## 
-##  Power calculation for multiple co-primary endpoints (variance unknown) 
+##  Power calculation for multiple co-primary endpoints (covariance unknown) 
 ## 
-##               n = 106.0504
+##               n = 106.0342
 ##           delta = 0.5, 0.4
 ##              SD = 1, 1
 ##             rho = 0.5
@@ -358,24 +360,23 @@ Y &lt;-<span class="st"> </span><span class="kw">rmvnorm</span>(<span class="dt"
 Sigma &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>)
 <span class="kw">power.unknown.var</span>(<span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.5</span>, <span class="fl">0.4</span>), <span class="dt">rho =</span> <span class="fl">0.5</span>, <span class="dt">SD =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">sig.level =</span> <span class="fl">0.025</span>, 
                   <span class="dt">power =</span> <span class="fl">0.8</span>, <span class="dt">min.n =</span> <span class="dv">105</span>, <span class="dt">max.n =</span> <span class="dv">120</span>)</code></pre></div>
-<pre><code>## Current precision:    -0.005113718 
-## Current precision:    0.05244112 
-## Current precision:    0.001460103 
-## Current precision:    -0.0004476949 
-## Current precision:    0.0003336463 
-## Current precision:    -0.0003484715 
-## Current precision:    -0.0005407812 
-## Current precision:    -5.602369e-05 
-## Current precision:    0.0002280232 
-## Current precision:    -0.0001051499 
-## Current precision:    -0.000355443 
-## Current precision:    -1.190841e-05 
-## Current precision:    0.0008269449 
-## Current precision:    -0.0002344186</code></pre>
+<pre><code>## Current precision:    -0.0052752 
+## Current precision:    0.05277864 
+## Current precision:    0.000937053 
+## Current precision:    0.0002218271 
+## Current precision:    4.581923e-05 
+## Current precision:    -2.767359e-05 
+## Current precision:    -0.0001621498 
+## Current precision:    0.0002723299 
+## Current precision:    0.0006174584 
+## Current precision:    -4.014953e-05 
+## Current precision:    0.0001874886 
+## Current precision:    0.000652976 
+## Current precision:    0.0004934175</code></pre>
 <pre><code>## 
-##  Power calculation for multiple co-primary endpoints (variance unknown) 
+##  Power calculation for multiple co-primary endpoints (covariance unknown) 
 ## 
-##               n = 106.1013
+##               n = 106.0872
 ##           delta = 0.5, 0.4
 ##              SD = 1, 1
 ##             rho = 0.5
@@ -405,14 +406,14 @@ Sigma &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">power.unknown.var</span>(<span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">n =</span> <span class="dv">107</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.5</span>,<span class="fl">0.4</span>), <span class="dt">Sigma =</span> <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.5</span>,<span class="fl">0.5</span>, <span class="dv">1</span>), <span class="dt">nrow=</span><span class="dv">2</span>), 
                   <span class="dt">sig.level =</span> <span class="fl">0.025</span>)</code></pre></div>
 <pre><code>## 
-##  Power calculation for multiple co-primary endpoints (variance unknown) 
+##  Power calculation for multiple co-primary endpoints (covariance unknown) 
 ## 
 ##               n = 107
 ##           delta = 0.5, 0.4
 ##              SD = 1, 1
 ##             rho = 0.5
 ##       sig.level = 0.025
-##           power = 0.8043391
+##           power = 0.8035259
 ## 
 ## Sigma =
 ##      [,1] [,2]
@@ -437,16 +438,16 @@ Y &lt;-<span class="st"> </span><span class="kw">rmvnorm</span>(<span class="dt"
 ##  Intersection-union t-test
 ## 
 ## data:  x and y
-## t = 1.5863, df = 210, p-value = 0.1142
+## t = 2.2804, df = 210, p-value = 0.02359
 ## alternative hypothesis:  true difference in means is larger than 0 for all endpoints 
 ## 97.5 percent confidence intervals:
 ##             0.025         1
-## EDP.1  0.23196332 0.8320000
-## EDP.2 -0.09538668 0.5461955
+## EDP.1 0.108055244 0.7490177
+## EDP.2 0.003061715 0.6096682
 ## sample estimates:
-##               X           Y
-## EDP.1 0.5106371 -0.02134458
-## EDP.2 0.2770461  0.05164167</code></pre>
+##               X         Y
+## EDP.1 0.5751176 0.1465811
+## EDP.2 0.4175587 0.1111938</code></pre>
 </div>
 </div>
 </div>
@@ -553,7 +554,7 @@ MERIT [7] two primary endpoints are considered [5]. The primary endpoints are</p
 <h2>4. Applications</h2>
 <div id="multiple-co-primary-endpoints-with-known-covariance" class="section level3">
 <h3>4.1. Multiple co-primary endpoints with known covariance</h3>
-<p>In Alzheimer’s Disease (AD) clinical trials, ADAS-cog (Alzheimer’s Disease Assessment Scale - cognitive Sub-Scale) and CIBIC-plus (clinicians Interview Based Impression of change, Plus care give) are used as co-primary endpoints. In a 24 week double blinded, placebo controlled trial of donepezil in patients with AD [9], in which the standardized effect size of ADAS-cog and CIBIC-plus are given as 0.47 and 0.48 and known correlations of the two endpoints are <span class="math inline">\(\rho_z\)</span> = 0.0, 0.3, 0.5, 0.8 at a significance level of 0.025 with <code>power = 0.80</code>, the sample sizes can be calculated as follows</p>
+<p>In Alzheimer’s Disease (AD) clinical trials, ADAS-cog (Alzheimer’s Disease Assessment Scale - cognitive Sub-Scale) and CIBIC-plus (Clinicians Interview Based Impression of Change - plus care give) are used as co-primary endpoints. In a 24 week double blinded, placebo controlled trial of donepezil in patients with AD [9], in which the standardized effect size of ADAS-cog and CIBIC-plus are given as 0.47 and 0.48 and known correlations of the two endpoints are <span class="math inline">\(\rho_z\)</span> = 0.0, 0.3, 0.5, 0.8 at a significance level of 0.025 with <code>power = 0.80</code>, the sample sizes can be calculated as follows</p>
 <ul>
 <li>K = 2, number of co-primary endpoints</li>
 <li>delta = c(0.47, 0.48), expected effect size</li>
@@ -662,7 +663,7 @@ MERIT [7] two primary endpoints are considered [5]. The primary endpoints are</p
 <pre><code>## 
 ##  Power calculation for multiple co-primary endpoints (covariance known) 
 ## 
-##               n = 267.2353
+##               n = 267.2338
 ##           delta = 0.36, 0.30, 0.26
 ##              SD = 1, 1, 1
 ##             rho = 0.3, 0.3, 0.3
@@ -699,22 +700,31 @@ MERIT [7] two primary endpoints are considered [5]. The primary endpoints are</p
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">power.unknown.var</span>(<span class="dt">K =</span> <span class="dv">3</span>, <span class="dt">delta =</span> <span class="kw">c</span>(<span class="fl">0.36</span>, <span class="fl">0.30</span>, <span class="fl">0.26</span>),
                 <span class="dt">Sigma =</span> <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="dv">1</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">3</span>), 
                 <span class="dt">sig.level =</span> <span class="fl">0.025</span>, <span class="dt">power =</span> <span class="fl">0.8</span>, <span class="dt">min.n =</span> <span class="dv">268</span>, <span class="dt">max.n =</span> <span class="dv">300</span>)</code></pre></div>
-<pre><code>## Current precision:    -0.002231014 
-## Current precision:    0.05109629 
-## Current precision:    0.0003340907 
-## Current precision:    0.0005671785 
-## Current precision:    -0.001372194 
-## Current precision:    -0.0002268824 
-## Current precision:    -0.0001274194 
-## Current precision:    -8.499606e-05 
-## Current precision:    3.030342e-06 
-## Current precision:    -0.0002214168 
-## Current precision:    -0.0001525683 
-## Current precision:    -0.0001187343</code></pre>
+<pre><code>## Current precision:    -0.002322828 
+## Current precision:    0.05101954 
+## Current precision:    0.000445988 
+## Current precision:    6.428806e-06 
+## Current precision:    0.0003022869 
+## Current precision:    -0.001139706 
+## Current precision:    -0.0003499559 
+## Current precision:    -6.427255e-05 
+## Current precision:    -6.670384e-05 
+## Current precision:    -0.0005426828 
+## Current precision:    -0.0002492665 
+## Current precision:    -4.633618e-05 
+## Current precision:    -0.0001099615 
+## Current precision:    4.046393e-05 
+## Current precision:    7.048207e-05 
+## Current precision:    -0.0002842244 
+## Current precision:    6.921711e-05 
+## Current precision:    0.0001592671 
+## Current precision:    4.438122e-06 
+## Current precision:    -0.0002975962 
+## Current precision:    -0.0005878342</code></pre>
 <pre><code>## 
-##  Power calculation for multiple co-primary endpoints (variance unknown) 
+##  Power calculation for multiple co-primary endpoints (covariance unknown) 
 ## 
-##               n = 269.134
+##               n = 269.1627
 ##           delta = 0.36, 0.30, 0.26
 ##              SD = 1, 1, 1
 ##             rho = 0.3, 0.3, 0.3
@@ -822,7 +832,7 @@ MERIT [7] two primary endpoints are considered [5]. The primary endpoints are</p
 </div>
 <div id="summary" class="section level2">
 <h2>5. Summary</h2>
-<p>In clinical trials, the use of more then two primary endpoints is often necessary nowadays. Here, the correlation plays a crucial role which creates a quite complicated situation and makes it challenging to calculate the sample size and to estimate power. Hence, in order to make this accessible, we follow the book [12] and implemented our package <strong>mpe</strong> with the functions introduced above. One can use it to calculate sample size and power for multiple (co-)primary endpoints and we hope that it will be useful for statisticians and practicians.</p>
+<p>In clinical trials, the use of more than two primary endpoints is often necessary nowadays. Here, the correlation plays a crucial role which creates a quite complicated situation and makes it challenging to calculate the sample size and to estimate power. Hence, in order to make this accessible, we follow the book [12] and implemented our package <strong>mpe</strong> with the functions introduced above. One can use it to calculate sample size and power for multiple (co-)primary endpoints and we hope that it will be useful for statisticians and practicians.</p>
 </div>
 <div id="references" class="section level2">
 <h2>6. References</h2>
