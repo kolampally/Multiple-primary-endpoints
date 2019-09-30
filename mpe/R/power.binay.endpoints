@@ -1,0 +1,254 @@
+
+power.binary.endpoints <- function(K= NULL, n = NULL, p1 = NULL,p2 = NULL, Sigma, SD, rho, sig.level = 0.05,
+                                   power = NULL, method = "arcsine", tol = .Machine$double.eps^0.25){
+  
+  ##p1 <- success proportions or probaility in test(1) -> πtk 
+  ##p2 <- success proportions or probability in conrol(1) -> πck
+  ##(1- p1) <- failure proportions in test(0) -> θtk
+  ##(1-p2) <- failure proportions in control(0)-> θck
+  ##pie <- difference between the successive proportions(p1 - p2)
+  ## r = nC/nT, nC = nT, ## where k = r/(1+r), therefore k = 1/2
+  
+  ############################################
+  ###Formula's are from book page no.30#######
+  ############################################
+  ##vko = sqrt(((1-k)*p1)+(k*p2))*(((1-k)*(1-p1))+(k*(1-p2))
+  ## vk = sqrt((k*p1*(1-p2))+((1-k)*(1-p1)*(1-p2)))
+  
+  if (!is.na(pmatch(method, "arcsine")))
+    method <- "arcsine"
+  methods <- c("chisquare", "chisquare-cc", "arcsine", "arcsine-cc")
+  method <- pmatch(method, methods)
+  
+  if (is.na(method))
+    stop("invalid method")
+  if (method == -1)
+    stop("ambiguous method")
+  
+  
+  ## check of input
+  if(missing(K))
+    stop("specify the number of co-primary binary endpoints")
+  if(!is.numeric(K))
+    stop("'K' must be a natural number > 1")
+  K <- as.integer(K)
+  
+  if(is.null(n) & is.null(power))
+    stop("either 'n' or 'power' must be specified")
+  if(!is.null(n) & !is.null(power))
+    stop("either 'n' or 'power' must be NULL")
+  if(!is.null(n)){
+    if(length(n) > 1){
+      warning("length of 'n' is greater than 1, only the first entry is used")
+      n <- n[1]
+    }
+    n <- as.integer(n)
+  }
+  if(!is.null(power)){
+    if(power <= 0 | power >= 1)
+      stop("power must be in (0, 1)")
+  }
+  if(is.null(p1))
+    stop("success proportions or probaility in test 'p1' is missing")
+  if(any(p1 <= 0) | any(p1 >= 1))
+    stop( " 'p1' must be in (0, 1)")
+  
+  
+  if(is.null(p2))
+    stop("success proportion of control 'pie' is missing")
+  if(any(p2 <= 0) | any(p2 >= 1))
+    stop( " 'p2' must be in (0, 1)")
+  
+  if(!missing(Sigma)){
+    if(nrow(Sigma) != ncol(Sigma))
+      stop("covariance matrix 'Sigma' must be quadratic")
+    if(nrow(Sigma) != K)
+      stop("covariance matrix must have dimension 'K' x 'K'")
+    if(max(abs(Sigma - t(Sigma))) > 1e-10)
+      stop("matrix 'Sigma' must be symmetric")
+  }
+  if(missing(Sigma)){
+    if(missing(SD) || missing(rho))
+      stop("if 'Sigma' is missing 'SD' and 'rho' must be given.")
+    if(length(SD) != K)
+      stop("length of 'SD' must be equal to 'K'")
+    if(length(rho) != 0.5*K*(K-1))
+      stop("length of 'rho' must be equal to '0.5*K*(K-1)'")
+    Sigma <- matrix(0, nrow = K, ncol = K)
+    iter <- 0
+    for(i in 1:(K-1)){
+      for(j in (i+1):K){
+        iter <- iter + 1
+        Sigma[i,j] <- rho[iter]*SD[i]*SD[j]
+      }
+    }
+    Sigma <- Sigma + t(Sigma)
+    diag(Sigma) <- SD^2
+  }
+  if(!all(eigen(Sigma)$values > 0))
+    stop("matrix 'Sigma' must be positive definite")
+  Sigma.cor <- cov2cor(Sigma)
+  
+  if(sig.level <= 0 | sig.level >= 1)
+    stop("significance level must be in (0, 1)")
+  
+  if(method == 1){##chisquare
+    
+    ## calculations
+    if(is.null(power)){
+      K <- nrow(Sigma)
+      std.effect <- (p1 - p2)/sqrt(diag(Sigma))
+      #r = nt/nc and nt = nc and k = r/1+r
+      k <- 1/2
+      vko = sqrt(((1-k)*p1+k*p2)*((1-k)*(1-p1)+k*(1-p2)))
+      vk = sqrt((k*p1*(1-p1)) +((1-k)*p2*(1-p2)))
+      z.alpha <- qnorm(1-sig.level)
+      rho <- cov2cor(Sigma)
+      crit.vals <- (vko*z.alpha-sqrt(k*n)*std.effect)/vk
+      
+      power <- pmvnorm(upper  = -crit.vals, sigma = rho)
+      
+    }
+    if(is.null(n)){
+      K <- nrow(Sigma)
+      std.effect <- (p1 - p2)/sqrt(diag(Sigma))
+      k <- 1/2
+      vko = sqrt(((1-k)*p1+k*p2)*((1-k)*(1-p1)+k*(1-p2)))
+      vk = sqrt((k*p1*(1-p1)) +((1-k)*p2*(1-p2)))
+      z.alpha <- qnorm(1-sig.level)
+      rho <- cov2cor(Sigma)
+      ssize.fct <- function(n, std.effect,vko,vk,  k, z.alpha, rho, power){
+        crit.vals <- (vko*z.alpha-sqrt(k*n)*std.effect)/vk
+        
+        pmvnorm(upper = -crit.vals, sigma = rho) -  power
+        
+      }
+      
+      
+      n <- uniroot(ssize.fct, c(2, 1e+05), tol = tol, extendInt = "yes",
+                   std.effect = std.effect, vko = vko, vk = vk,  k = k, z.alpha = z.alpha, rho = rho,
+                   power = power)$root
+    }}
+  
+  if (method == 2){##chisquare-cc
+    ## calculations
+    if(is.null(power)){
+      K <- nrow(Sigma)
+      std.effect <- (p1 - p2)/sqrt(diag(Sigma))
+      k <- 1/2
+      vko = sqrt(((1-k)*p1+k*p2)*((1-k)*(1-p1)+k*(1-p2)))
+      vk = sqrt((k*p1*(1-p1)) +((1-k)*p2*(1-p2)))
+      z.alpha <- qnorm(1-sig.level)
+      rho <- cov2cor(Sigma)
+      crit.vals <-  ((vko*z.alpha-sqrt(k*n)*std.effect)/vk) + (1/2*vk*sqrt(k*n))
+      power <- pmvnorm(upper  = -crit.vals, sigma = rho)
+      
+    }
+    if(is.null(n)){
+      K <- nrow(Sigma)
+      std.effect <- (p1 - p2)/sqrt(diag(Sigma))
+      k <- 1/2
+      vko = sqrt(((1-k)*p1+k*p2)*((1-k)*(1-p1)+k*(1-p2)))
+      vk = sqrt((k*p1*(1-p1)) +((1-k)*p2*(1-p2)))
+      z.alpha <- qnorm(1-sig.level)
+      rho <- cov2cor(Sigma)
+      ssize.fct <- function(n, std.effect,vko,vk,  k, z.alpha, rho, power){
+        crit.vals <- ((vko*z.alpha-sqrt(k*n)*std.effect)/vk) + 1/(2*vk*sqrt(k*n))
+        pmvnorm(upper = -crit.vals, sigma = rho) -  power
+        
+      }
+      n <- uniroot(ssize.fct, c(2, 1e+05), tol = tol, #extendInt = "yes",
+                   std.effect = std.effect, vko = vko, vk = vk,  k = k, z.alpha = z.alpha, rho = rho,
+                   power = power)$root
+      
+    }}
+  
+  if(method == 3){##arcsine
+    ## calculations
+    if(is.null(power)){
+      K <- nrow(Sigma)
+      std.effect <- (asin(sqrt(p1))- asin(sqrt(p2)))/sqrt(diag(Sigma))
+      k <- 1/2
+      z.alpha <- qnorm(1-sig.level)
+      rho <- cov2cor(Sigma)
+      crit.vals <- z.alpha - 2*sqrt(k*n)*(asin(sqrt(p1))- asin(sqrt(p2)))
+      power <-   pmvnorm(upper  = -crit.vals, sigma = rho)
+      
+    }
+    if(is.null(n)){
+      K <- nrow(Sigma)
+      std.effect <- (asin(sqrt(p1))- asin(sqrt(p2)))/sqrt(diag(Sigma))
+      k <- 1/2
+      z.alpha <- qnorm(1-sig.level)
+      rho <- cov2cor(Sigma)
+      ssize.fct <- function(n, std.effect,  k, z.alpha, rho, power){
+        crit.vals <-  z.alpha - 2*sqrt(k*n)*(asin(sqrt(p1))- asin(sqrt(p2)))
+        pmvnorm(upper = -crit.vals, sigma = rho) - power
+        
+      }
+      n <- uniroot(ssize.fct, c(2, 1e+05), tol = tol, extendInt = "yes",
+                   std.effect = std.effect,  k = k, z.alpha = z.alpha, rho = rho,
+                   power = power)$root
+    }
+    
+  }
+  
+  if(method == 4){## arcsine-cc
+    
+    if(is.null(power)){
+      K <- nrow(Sigma)
+      std.effect <- (asin(sqrt(p1))- asin(sqrt(p2)))/sqrt(diag(Sigma))
+      k <- 1/2
+      z.alpha <- qnorm(1-sig.level)
+      rho <- cov2cor(Sigma)
+      
+      T1 <- z.alpha - 2*(sqrt(k*n)*(asin(sqrt(p1-(1/(2*n))))- asin(sqrt(p2+(1/(2*n))*(1-k)/k))))
+      T2 <- k*p1*(1-p1)/((p1-(1/(2*n)))*((1-p1)+1/(2*n)))
+      T3 <- ((1-k)*p2*(1-p2)/((p2+(1/(2*n))*(1-k)/k)*((1-p2)-(1/(2*n))*((1-k)/k))))
+      crit.vals <- T1/sqrt(T2 + T3)
+      
+      power <-   pmvnorm(upper  = -crit.vals, sigma = rho)
+    }
+    
+    if(is.null(n)){
+      K <- nrow(Sigma)
+      std.effect <-  asin(sqrt(p1))- asin(sqrt(p2))/sqrt(diag(Sigma))
+      k <- 1/2
+      z.alpha <- qnorm(1-sig.level)
+      rho <- cov2cor(Sigma)
+      ssize.fct <- function(n, std.effect,  k, z.alpha, rho, power){
+        T1 <- z.alpha - 2*(sqrt(k*n)*(asin(sqrt(p1-(1/(2*n))))- asin(sqrt(p2+(1/(2*n))*(1-k)/k))))
+        T2 <- k*p1*(1-p1)/((p1-(1/(2*n)))*((1-p1)+1/(2*n)))
+        T3 <- ((1-k)*p2*(1-p2)/((p2+(1/(2*n))*(1-k)/k)*((1-p2)-(1/(2*n))*((1-k)/k))))
+        crit.vals <- T1/sqrt(T2 + T3)
+        
+        
+        pmvnorm(upper = -crit.vals, sigma = rho) - power
+      } 
+      n <- uniroot(ssize.fct, c(2, 1e+05), tol = tol, extendInt = "yes",
+                   std.effect = std.effect,   k = k, z.alpha = z.alpha, rho = rho,
+                   power = power)$root
+    }
+  }
+  
+  NOTE <- "n is number in *each* group"
+  DESIGN <- "Power calculation for multiple co-primary binary endpoints "
+  structure(list(n = n,K = K, p1 = p1, p2 = p2, Sigma = Sigma, sig.level = sig.level,
+                 power = power, note = NOTE, method = paste(methods[method]), design = DESIGN),
+            class = "power.bmpe.test")
+  
+}  
+print.power.bmpe.test <- function (x, digits = getOption("digits"), ...) {
+  cat("\n", x$design, "\n\n")
+  note <- x$note
+  Sigma <- x$Sigma
+  x[c("design", "note", "Sigma")] <- NULL
+  cat(paste(format(names(x), width = 15L, justify = "right"),
+            format(x, digits = digits), sep = " = "), sep = "\n")
+  cat("\nSigma =\n")
+  print(Sigma)
+  if (!is.null(note))
+    cat("\n", "NOTE: ", note, "\n\n", sep = "")
+  else cat("\n")
+  invisible(x)
+}
